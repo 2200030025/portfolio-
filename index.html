@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trivikram | AI & ML Portfolio</title>
+    <link rel="icon" href="favicon.png">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <script src="https://kit.fontawesome.com/aa61d806c9.js" crossorigin="anonymous"></script>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                        mono: ['Space Grotesk', 'monospace'],
+                    },
+                    colors: {
+                        // Dynamic Colors via CSS Variables
+                        primary: 'var(--color-primary)', 
+                        secondary: 'var(--color-secondary)',
+                        
+                        // Static Colors
+                        dark: '#000000', 
+                        card: '#1A1A1A',
+                        
+                        // Light Mode specific overrides if needed
+                        lightbg: '#f8fafc',
+                        lighttext: '#1e293b',
+                    },
+                    animation: {
+                        'gradient-x': 'gradient-x 15s ease infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'twinkle': 'twinkle 2s infinite ease-in-out',
+                    },
+                    keyframes: {
+                        'gradient-x': {
+                            '0%, 100%': {
+                                'background-size': '200% 200%',
+                                'background-position': 'left center'
+                            },
+                            '50%': {
+                                'background-size': '200% 200%',
+                                'background-position': 'right center'
+                            },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        twinkle: {
+                            '0%, 100%': { opacity: 1 },
+                            '50%': { opacity: 0.3 },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* CSS Variables for Dynamic Theming */
+        :root {
+            /* Light Mode Defaults (Restored Pastel) */
+            --bg-gradient: linear-gradient(-45deg, #f0f9ff, #e0f2fe, #f5f3ff, #ede9fe);
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(0, 0, 0, 0.05);
+            --cursor-color: #d946ef; /* Fuchsia Cursor */
+            
+            /* Color Variables for Tailwind */
+            --color-primary: #d946ef; 
+            --color-secondary: #00ffff; 
+        }
+
+        .dark {
+            /* Space Theme (Black + Stars) */
+            --bg-gradient: #000000; /* Pure Black Space */
+            --glass-bg: rgba(20, 20, 30, 0.6); 
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --cursor-color: #ffffff; /* White Cursor for Space */
+            
+            /* Color Variables for Tailwind */
+            --color-primary: #00E5FF; /* Neon Cyan Accents */
+            --color-secondary: #FFFFFF; /* White Secondary */
+        }
+
+        /* Animated Background Base */
+        .animated-bg {
+            background: var(--bg-gradient);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            transition: background 0.5s ease;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Starfield Canvas */
+        #starfield {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-gradient); 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #333;
+        }
+        .dark ::-webkit-scrollbar-thumb:hover {
+            background: #00E5FF;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #d946ef;
+        }
+
+        /* Custom Cursor */
+        .cursor-dot,
+        .cursor-outline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            z-index: 9999;
+            pointer-events: none;
+        }
+        .cursor-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--cursor-color);
+        }
+        .cursor-outline {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--cursor-color);
+            transition: width 0.2s, height 0.2s, border-color 0.2s;
+            opacity: 0.5;
+        }
+        
+        body:hover .cursor-outline.hovered {
+            width: 60px;
+            height: 60px;
+            background-color: rgba(255, 255, 255, 0.1); 
+            border-color: var(--cursor-color);
+        }
+        /* Override tint color for light mode via specificity */
+        :root:not(.dark) body:hover .cursor-outline.hovered {
+             background-color: rgba(217, 70, 239, 0.1);
+        }
+
+        /* Reveal on Scroll Animation Classes */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Glassmorphism */
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
+        }
+        
+        html:not(.dark) .glass {
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+<body class="text-gray-800 dark:text-gray-200 antialiased selection:bg-primary selection:text-white dark:selection:text-black overflow-x-hidden transition-colors duration-300">
+
+    <!-- Animated Backgrounds -->
+    <div class="animated-bg"></div>
+    <!-- Starfield Canvas for Space Theme -->
+    <canvas id="starfield"></canvas>
+
+    <!-- Custom Cursor Elements -->
+    <div class="cursor-dot hidden md:block"></div>
+    <div class="cursor-outline hidden md:block"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 transition-all duration-300" id="navbar">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center glass rounded-b-xl mt-0 md:mt-2 max-w-7xl">
+            <!-- Logo -->
+            <a href="#" class="flex items-center gap-3 hover-trigger">
+                <img src="OIP.jpg" alt="Logo" class="h-10 w-auto rounded-md border border-white/10 shadow-lg">
+                <span class="text-xl font-bold font-mono tracking-tighter text-gray-900 dark:text-white">KT<span class="text-primary">.</span>Vikram</span>
+            </a>
+            
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex space-x-8 items-center">
+                <a href="#home" class="text-sm font-medium hover:text-primary dark:hover:text-primary transition-colors hover-trigger">Home</a>
+                <a href="#about" class="text-sm font-medium hover:text-primary dark:hover:text-primary transition-colors hover-trigger">About</a>
+                <a href="#projects" class="text-sm font-medium hover:text-primary dark:hover:text-primary transition-colors hover-trigger">Projects</a>
+                <a href="#internships" class="text-sm font-medium hover:text-primary dark:hover:text-primary transition-colors hover-trigger">Internships</a>
+                <a href="#skills" class="text-sm font-medium hover:text-primary dark:hover:text-primary transition-colors hover-trigger">Skills</a>
+                
+                <div class="flex items-center gap-4">
+                    <a href="#contact" class="px-5 py-2 rounded-full border border-primary text-primary hover:bg-primary hover:text-white dark:hover:text-black transition-all duration-300 text-sm font-bold hover-trigger">Get In Touch</a>
+                    
+                    <!-- Theme Toggle Button -->
+                    <button id="themeToggle" class="w-10 h-10 rounded-full glass flex items-center justify-center text-gray-600 dark:text-white hover:text-primary dark:hover:text-primary transition-all duration-300 hover-trigger shadow-sm hover:shadow-md" aria-label="Toggle Dark Mode">
+                        <i class="fas fa-sun text-lg dark:hidden"></i>
+                        <i class="fas fa-moon text-lg hidden dark:block"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <button class="md:hidden text-2xl text-gray-800 dark:text-white focus:outline-none" id="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+
+        <!-- Mobile Menu Dropdown -->
+        <div class="md:hidden hidden absolute top-full left-0 w-full glass border-t border-gray-200 dark:border-gray-700" id="mobile-menu">
+            <div class="flex flex-col p-6 space-y-4 text-center">
+                <a href="#home" class="mobile-link text-gray-800 dark:text-white hover:text-primary">Home</a>
+                <a href="#about" class="mobile-link text-gray-800 dark:text-white hover:text-primary">About</a>
+                <a href="#projects" class="mobile-link text-gray-800 dark:text-white hover:text-primary">Projects</a>
+                <a href="#internships" class="mobile-link text-gray-800 dark:text-white hover:text-primary">Internships</a>
+                <a href="#skills" class="mobile-link text-gray-800 dark:text-white hover:text-primary">Skills</a>
+                <a href="#contact" class="mobile-link text-primary font-bold">Contact Me</a>
+                <!-- Mobile Theme Toggle -->
+                <button id="mobileThemeToggle" class="mx-auto mt-4 px-4 py-2 rounded-full glass text-gray-800 dark:text-white flex items-center gap-2">
+                    <span class="text-sm font-bold">Toggle Theme</span>
+                    <i class="fas fa-sun dark:hidden"></i>
+                    <i class="fas fa-moon hidden dark:block"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Home Section -->
+    <section id="home" class="min-h-screen flex items-center pt-20 relative overflow-hidden">
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="flex flex-col-reverse md:flex-row items-center justify-between gap-12">
+                <div class="md:w-1/2 text-center md:text-left reveal active">
+                    <h1 class="text-5xl md:text-7xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
+                        Ketha.Trivikram
+                    </h1>
+                    <p class="text-lg text-gray-600 dark:text-gray-300 mb-8 max-w-lg mx-auto md:mx-0 leading-relaxed font-medium">
+                        I'm a highly motivated Computer Science and Engineering (Cyber Security) student at Koneru Lakshmaiah University, Andhra Pradesh, with a strong passion for software development and cybersecurity. I have hands-on experience in Java, Python, SQL, HTML, CSS, JavaScript, and React, along with practical exposure to Django, Flask, and the MERN stack through academic projects. continuously expanding my knowledge in software engineering, cloud computing, and cybersecurity technologies.
+
+                    </p>
+                    <p class="text-md text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
+                        <b><i>Technical Skills:</i></b><br>
+                       Programming Languages: Java, Python, SQL (MySQL), JavaScript<br>
+Web Development: HTML, CSS, React, Django, Flask, MERN Stack (MongoDB, Express.js, React.js, Node.js)<br>
+Cybersecurity: Network Security, VAPT, Threat Detection, Incident Response, Email Security (SPF, DKIM, DMARC)<br>
+Security Tools: Metasploit, Wireshark, Nmap, SQLMap, CyberChef, Splunk
+                    </p>
+                    
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+                        <a href="#contact" class="px-8 py-3 rounded-full bg-gradient-to-r from-primary to-blue-500 dark:from-primary dark:to-blue-600 text-white dark:text-black font-bold hover:shadow-lg hover:shadow-primary/50 transition-all transform hover:-translate-y-1 hover-trigger">
+                            Get In Touch
+                        </a>
+                    </div>
+                </div>
+
+                <div class="md:w-1/2 flex justify-center reveal active">
+                    <div class="relative w-72 h-72 md:w-96 md:h-96 group">
+                        <div class="absolute inset-0 bg-gradient-to-r from-primary to-blue-400 dark:to-white rounded-2xl transform rotate-6 group-hover:rotate-12 transition-transform duration-500 opacity-75 blur-lg"></div>
+                        <div class="absolute inset-0 bg-white dark:bg-card rounded-2xl transform rotate-6 group-hover:rotate-12 transition-transform duration-500 border border-gray-200 dark:border-gray-700"></div>
+                        <img src="hero pic.jpg" onerror="this.src='https://ui-avatars.com/api/?name=Vignesh+Babu&background=1E90FF&color=000&size=500'" alt="Trivikram" class="absolute inset-0 w-full h-full object-cover rounded-2xl shadow-2xl transform transition-transform duration-500 group-hover:scale-105 z-10">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-24 relative">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-16 reveal text-gray-900 dark:text-white"><span class="border-b-4 border-primary pb-2">ABOUT ME</span></h2>
+            
+            <div class="grid md:grid-cols-2 gap-12 items-center mb-20 reveal">
+                <div class="space-y-6">
+    <div class="glass p-8 rounded-2xl relative overflow-hidden group">
+        <div class="absolute top-0 right-0 w-24 h-24 bg-primary/20 rounded-bl-full transition-transform group-hover:scale-150"></div>
+
+        <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+            As a <span class="text-primary font-bold">Computer Science and Engineering (Cyber Security)</span> student at Koneru Lakshmaiah University, I have developed a strong foundation in software development, cybersecurity, and web technologies through academic projects and continuous learning.
+        </p>
+
+        <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+            I have built applications using <span class="text-primary font-bold">Java, Python, Django, Flask, React, Node.js, Express.js, and MongoDB</span>, focusing on creating secure, scalable, and user-friendly software solutions. My projects include an Online Exam Portal, an Online Art Gallery, and a Secure Email Gateway for Phishing Detection.
+        </p>
+
+        <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
+            Along with software development, I have strengthened my cybersecurity knowledge through hands-on experience with tools such as <span class="text-primary font-bold">Splunk, Wireshark, Metasploit, Nmap, SQLMap, and CyberChef</span>. I am committed to continuously enhancing my technical skills and contributing to innovative software and cybersecurity solutions.
+        </p>
+    </div>
+</div>
+                <div class="grid grid-cols-2 gap-4">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRv3iKgO6wVuo-CTsVh5oamkB5dyC9ZdbxMjlMsiLHbRA&s=10" class="rounded-xl shadow-lg hover:scale-105 transition-transform duration-500 border border-white dark:border-gray-700 object-cover h-48 w-full hover-trigger">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyUTVHdflxRyKnx4LacSjvxJYCWIH2UBODHu9BRFtWiA&s=10" class="rounded-xl shadow-lg hover:scale-105 transition-transform duration-500 border border-white dark:border-gray-700 object-cover h-48 w-full mt-8 hover-trigger">
+                </div>
+            </div>
+
+                
+                <div class="text-center mt-8">
+                    <a href="My Resume.pdf" download="Resume.pdf" class="inline-flex items-center px-8 py-3 rounded-full border border-gray-400 dark:border-gray-600 hover:border-primary dark:hover:border-white text-gray-800 dark:text-white font-bold transition-all hover:bg-gray-100 dark:hover:bg-white/10 hover-trigger">
+                        <i class="fa fa-download mr-2"></i> Download My Resume
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="py-24">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-16 reveal text-gray-900 dark:text-white"><span class="border-b-4 border-secondary pb-2">PROJECTS</span></h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- NeuroNodes -->
+                <div class="glass rounded-xl overflow-hidden hover:shadow-2xl hover:shadow-primary/20 transition-all duration-300 transform hover:-translate-y-2 group reveal">
+                    <div class="h-48 overflow-hidden relative">
+                        <img src="neuronode.png" onerror="this.src='https://placehold.co/600x400/222/FFF?text=NeuroNodes'" alt="NeuroNodes" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-primary transition-colors">NeuroNodes</h3>
+                        <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">Chat with all your apps in one place. NeuroNodes uses AI to connect your tools like Gmail, Notion, and Slack for infinite productivity.</p>
+                        <a href="https://code-spark-25.vercel.app/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center text-primary text-sm font-bold hover:underline hover-trigger">View Website <i class="fas fa-arrow-right ml-2 text-xs"></i></a>
+                    </div>
+                </div>
+
+                <!-- Portfolio -->
+                <div class="glass rounded-xl overflow-hidden hover:shadow-2xl hover:shadow-primary/20 transition-all duration-300 transform hover:-translate-y-2 group reveal">
+                    <div class="h-48 overflow-hidden relative">
+                        <img src="https://cdn.prod.website-files.com/6344c9cef89d6f2270a38908/673f2a3b44c1ed4901bb43bb_6386328bea96dffacc89946b_d1.webp" alt="Portfolio" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-primary transition-colors">Portfolio</h3>
+                        <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">Web Development projects using HTML, CSS, and JavaScript.</p>
+                        <a href="https://gvignesh.in" target="_blank" rel="noopener noreferrer" class="inline-flex items-center text-primary text-sm font-bold hover:underline hover-trigger">View Website <i class="fas fa-arrow-right ml-2 text-xs"></i></a>
+                    </div>
+                </div>
+
+                <!-- CodeReview Pro -->
+                <div class="glass rounded-xl overflow-hidden hover:shadow-2xl hover:shadow-primary/20 transition-all duration-300 transform hover:-translate-y-2 group reveal">
+                    <div class="h-48 overflow-hidden relative">
+                        <img src="code.jpg" onerror="this.src='https://placehold.co/600x400/222/FFF?text=CodeReview'" alt="CodeReview" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-primary transition-colors">CodeReview Pro</h3>
+                        <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">Python Flask projects help to automate code reviews and improve code quality.</p>
+                        <a href="https://vignesh46.pythonanywhere.com/" target="_blank" class="inline-flex items-center text-primary text-sm font-bold hover:underline hover-trigger">View Website <i class="fas fa-arrow-right ml-2 text-xs"></i></a>
+                    </div>
+                </div>
+
+                <!-- HoneyPot -->
+                <div class="glass rounded-xl overflow-hidden hover:shadow-2xl hover:shadow-primary/20 transition-all duration-300 transform hover:-translate-y-2 group reveal">
+                    <div class="h-48 overflow-hidden relative">
+                        <img src="honey.png" onerror="this.src='https://placehold.co/600x400/222/FFF?text=HoneyPot'" alt="HoneyPot" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-primary transition-colors">HoneyPot</h3>
+                        <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">A web application designed to detect and analyze potential security threats.Along with notifications</p>
+                        <a href="https://vigneshbabu.pythonanywhere.com/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center text-primary text-sm font-bold hover:underline hover-trigger">View Website <i class="fas fa-arrow-right ml-2 text-xs"></i></a>
+                    </div>
+                </div>
+
+                 <!-- Virtual Mouse -->
+                 <div class="glass rounded-xl overflow-hidden hover:shadow-2xl hover:shadow-primary/20 transition-all duration-300 transform hover:-translate-y-2 group reveal">
+                    <div class="h-48 overflow-hidden relative">
+                        <img src="https://i.ytimg.com/vi/8gPONnGIPgw/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLApk45tFx3H61Yy9vBlJ9OaCm3X7w" alt="Virtual Mouse" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-primary transition-colors">Virtual Mouse</h3>
+                        <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">Control your cursor with hand gestures. AI-powered, touch-free navigation!</p>
+                        <a href="https://www.linkedin.com/posts/Ketha-vignesh-babu-29b307289_gesturecontrol-innovation-tech-activity-7212118301567537153-UYD7?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEX9pNcBYvp9eF8KPGohuVCqduoJp7sE08U" target="_blank" rel="noopener noreferrer" class="inline-flex items-center text-primary text-sm font-bold hover:underline hover-trigger">View Details <i class="fas fa-arrow-right ml-2 text-xs"></i></a>
+                    </div>
+                </div>
+
+                 <!-- AI Voicebot -->
+                 <div class="glass rounded-xl overflow-hidden hover:shadow-2xl hover:shadow-primary/20 transition-all duration-300 transform hover:-translate-y-2 group reveal">
+                    <div class="h-48 overflow-hidden relative">
+                        <img src="https://media.licdn.com/dms/image/v2/D5612AQGlfhE9IBQ8Bg/article-cover_image-shrink_720_1280/article-cover_image-shrink_720_1280/0/1693596641359?e=2147483647&v=beta&t=r7Ul99DWE8fm-HxxyeCKqa8wBhK_V23EaZnq6hY1_wc" alt="AI Voicebot" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-primary transition-colors">AI Voicebot</h3>
+                        <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">Speech-to-Speech AI Voice Bot. Talk, listen, and interact seamlessly. AI-powered voice recognition and response!</p>
+                        <a href="https://www.linkedin.com/posts/Ketha-vignesh-babu-29b307289_aimersociety-ai-voicebot-activity-7204810687485800449-DrA_?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEX9pNcBYvp9eF8KPGohuVCqduoJp7sE08U" target="_blank" rel="noopener noreferrer" class="inline-flex items-center text-primary text-sm font-bold hover:underline hover-trigger">View Details <i class="fas fa-arrow-right ml-2 text-xs"></i></a>
+                    </div>
+                </div>
+
+                <!-- Websites Club -->
+                <div class="glass rounded-xl overflow-hidden hover:shadow-2xl hover:shadow-primary/20 transition-all duration-300 transform hover:-translate-y-2 group reveal">
+                    <div class="h-48 overflow-hidden relative">
+                        <img src="cr2.jpg" onerror="this.src='https://placehold.co/600x400/222/FFF?text=Websites+Club'" alt="Websites Club" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-primary transition-colors">Websites Club</h3>
+                        <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">DHAN FLY HIGH is a collage drone club integrated into our college website.</p>
+                        <a href="https://diet.ac.in/wp-content/uploads/DHAN%20FLY%20HIGH/index.html" target="_blank" rel="noopener noreferrer" class="inline-flex items-center text-primary text-sm font-bold hover:underline hover-trigger">View Website <i class="fas fa-arrow-right ml-2 text-xs"></i></a>
+                    </div>
+                </div>
+
+                <!-- Face Emotion -->
+                <div class="glass rounded-xl overflow-hidden hover:shadow-2xl hover:shadow-primary/20 transition-all duration-300 transform hover:-translate-y-2 group reveal">
+                    <div class="h-48 overflow-hidden relative">
+                        <img src="https://relaxifyapp.com/wordpress/wp-content/uploads/2021/11/Frame-18-3-1.png" onerror="this.src='https://placehold.co/600x400/222/FFF?text=Face+Emotion'" alt="Face Emotion Recognition" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-primary transition-colors">Face Emotion Recognition</h3>
+                        <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">It works for sentiment analysis and feedback!</p>
+                        <a href="https://www.linkedin.com/posts/Ketha-vignesh-babu-29b307289_machinelearning-deeplearning-computervision-activity-7210100805503176704-97YV?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEX9pNcBYvp9eF8KPGohuVCqduoJp7sE08U" target="_blank" rel="noopener noreferrer" class="inline-flex items-center text-primary text-sm font-bold hover:underline hover-trigger">View Details <i class="fas fa-arrow-right ml-2 text-xs"></i></a>
+                    </div>
+                </div>
+
+                <!-- Object Detection -->
+                <div class="glass rounded-xl overflow-hidden hover:shadow-2xl hover:shadow-primary/20 transition-all duration-300 transform hover:-translate-y-2 group reveal">
+                    <div class="h-48 overflow-hidden relative">
+                        <img src="https://kotaielectronics.com/wp-content/uploads/2024/03/maxresdefault.jpg" onerror="this.src='https://placehold.co/600x400/222/FFF?text=Object+Detection'" alt="Object Detection" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-primary transition-colors">Object Detection</h3>
+                        <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">Helmet Detection in Traffic. AI-powered system for road safety. Detects riders without helmets in real time!</p>
+                        <a href="https://www.linkedin.com/posts/Ketha-vignesh-babu-29b307289_aimers-aimersociety-activity-7201578296084500481-czaN?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEX9pNcBYvp9eF8KPGohuVCqduoJp7sE08U" target="_blank" rel="noopener noreferrer" class="inline-flex items-center text-primary text-sm font-bold hover:underline hover-trigger">View Details <i class="fas fa-arrow-right ml-2 text-xs"></i></a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Internships Section -->
+    <section id="internships" class="py-24">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-4 reveal text-gray-900 dark:text-white"><span class="border-b-4 border-primary pb-2">INTERNSHIPS & CERTIFICATES</span></h2>
+            <p class="text-center text-gray-600 dark:text-gray-400 mb-16 reveal text-sm">(click on the images to open the certificate)</p>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Google Cloud -->
+                <a href="https://drive.google.com/file/d/11kJzGYjzbIDT5DbrytBfKO9wwCCednTv/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="glass p-6 rounded-xl hover:bg-gray-100 dark:hover:bg-white/5 transition-all duration-300 hover-trigger group reveal flex flex-col items-center text-center">
+                    <div class="w-20 h-20 mb-4 bg-white rounded-full p-2 flex items-center justify-center overflow-hidden shadow-sm">
+                        <img src="https://images.credly.com/images/505080ad-3731-4b1d-98df-347655a45750/image.png" alt="Google Cloud" class="max-w-full max-h-full">
+                    </div>
+                    <h3 class="font-bold text-gray-900 dark:text-white mb-2 group-hover:text-primary">Google Cloud Cybersecurity</h3>
+                    <p class="text-xs text-gray-600 dark:text-gray-400 mt-2">Completed a comprehensive internship focused on cloud security architecture, threat detection, and incident response using Google Cloud Platform. Gained hands-on experience with Security Command Center, Cloud Armor, and IAM best practices for securing cloud infrastructure.</p>
+                </a>
+
+                <!-- Edubot -->
+                <a href="https://drive.google.com/file/d/1TKqb-wINpay6LyRCpHEwil8EHG_70z2O/view" target="_blank" rel="noopener noreferrer" class="glass p-6 rounded-xl hover:bg-gray-100 dark:hover:bg-white/5 transition-all duration-300 hover-trigger group reveal flex flex-col items-center text-center">
+                    <div class="w-20 h-20 mb-4 bg-white rounded-full p-2 flex items-center justify-center overflow-hidden shadow-sm">
+                        <img src="https://lms.edubottechnologies.com/edubot_logo.svg" alt="Edubot" class="max-w-full max-h-full">
+                    </div>
+                    <h3 class="font-bold text-gray-900 dark:text-white mb-2 group-hover:text-primary">EDUBOT</h3>
+                    <p class="text-xs text-gray-600 dark:text-gray-400 mt-2">I worked on an internship project using Flask web app and Python to explore Large Language Models (LLMs). Developed web interfaces to interact with LLMs, gaining hands-on experience in deploying AI models and building user-friendly applications.</p>
+                </a>
+
+                <!-- AIMER -->
+                <a href="https://drive.google.com/file/d/1FDZdXMRXWXJWHbZdzwRw5TsAHputT2LN/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="glass p-6 rounded-xl hover:bg-gray-100 dark:hover:bg-white/5 transition-all duration-300 hover-trigger group reveal flex flex-col items-center text-center">
+                    <div class="w-20 h-20 mb-4 bg-white rounded-full p-2 flex items-center justify-center overflow-hidden shadow-sm">
+                        <img src="https://aimersociety.com/wp-content/uploads/2023/08/AIMER-Society.png" alt="AIMER Society" class="max-w-full max-h-full">
+                    </div>
+                    <h3 class="font-bold text-gray-900 dark:text-white mb-2 group-hover:text-primary">AIMER Society</h3>
+                    <p class="text-xs text-gray-600 dark:text-gray-400 mt-2">I worked in Aimersociety as a Cybersecurity intern. Learned about SQL injections and using AI tools.</p>
+                </a>
+
+                <!-- BlackBuck -->
+                <a href="https://drive.google.com/file/d/1z2nf56fhtzEx7rL4ow702W5hKEefi-iZ/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="glass p-6 rounded-xl hover:bg-gray-100 dark:hover:bg-white/5 transition-all duration-300 hover-trigger group reveal flex flex-col items-center text-center">
+                    <div class="w-20 h-20 mb-4 bg-white rounded-full p-2 flex items-center justify-center overflow-hidden shadow-sm">
+                        <img src="https://static.vecteezy.com/system/resources/previews/021/557/479/non_2x/blackbuck-logo-design-antelop-india-silhoutte-blackbuck-logo-design-template-free-vector.jpg" alt="BlackBuck" class="max-w-full max-h-full">
+                    </div>
+                    <h3 class="font-bold text-gray-900 dark:text-white mb-2 group-hover:text-primary">BLACKBUCK</h3>
+                    <p class="text-xs text-gray-600 dark:text-gray-400 mt-2">I worked as Generative AI (Chat GPT) intern at BlackBuck. Learned prompt engineering.</p>
+                </a>
+
+                 <!-- Python -->
+                 <a href="https://drive.google.com/file/d/1XhYRNyBvINYnraPBd-VJl_62_bQ0Wj9I/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="glass p-6 rounded-xl hover:bg-gray-100 dark:hover:bg-white/5 transition-all duration-300 hover-trigger group reveal flex flex-col items-center text-center">
+                    <div class="w-20 h-20 mb-4 bg-white rounded-full p-2 flex items-center justify-center overflow-hidden shadow-sm">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYZqZkpMyiN2uSuT7GAf6JSkJ44YsZqoQHdw&s" alt="Python" class="max-w-full max-h-full">
+                    </div>
+                    <h3 class="font-bold text-gray-900 dark:text-white mb-2 group-hover:text-primary">PYTHON FOUNDATION CERTIFICATION</h3>
+                    <p class="text-xs text-gray-600 dark:text-gray-400 mt-2">Completed Python Foundation covering syntax, data types, control flow, functions, OOP, file I/O, and error handling. Gained hands-on experience with libraries like NumPy, Pandas and Matplotlib for data analysis and visualization.</p>
+                </a>
+
+                 <!-- Data Analytics -->
+                 <a href="https://drive.google.com/file/d/14dDs0VfUnVOxA3tsymGklSiVgjBSQyU3/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="glass p-6 rounded-xl hover:bg-gray-100 dark:hover:bg-white/5 transition-all duration-300 hover-trigger group reveal flex flex-col items-center text-center">
+                    <div class="w-20 h-20 mb-4 bg-white rounded-full p-2 flex items-center justify-center overflow-hidden shadow-sm">
+                        <img src="https://www.dicsinnovatives.com/blog/wp-content/uploads/2025/05/data-analytics-in-pitampura-rohini.png" alt="Data Analytics" class="max-w-full max-h-full">
+                    </div>
+                    <h3 class="font-bold text-gray-900 dark:text-white mb-2 group-hover:text-primary">Data Analytics Job Simulation</h3>
+                    <p class="text-xs text-gray-600 dark:text-gray-400 mt-2">Also trained in data analytics — data cleaning, exploratory data analysis, and visualization using Pandas, NumPy, and Matplotlib/Seaborn to derive actionable insights.</p>
+                </a>
+
+                 <!-- Java -->
+                 <a href="https://drive.google.com/file/d/10bhWmRlLnPbaSKA9sEve4rClAgY9dlHJ/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="glass p-6 rounded-xl hover:bg-gray-100 dark:hover:bg-white/5 transition-all duration-300 hover-trigger group reveal flex flex-col items-center text-center">
+                    <div class="w-20 h-20 mb-4 bg-white rounded-full p-2 flex items-center justify-center overflow-hidden shadow-sm">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTAuLz2gnv1q0vB7E2Mcdxd1TT5_2Hqr29GSQ&s" alt="Java" class="max-w-full max-h-full">
+                    </div>
+                    <h3 class="font-bold text-gray-900 dark:text-white mb-2 group-hover:text-primary">JAVA DEVELOPER CERTIFICATION</h3>
+                    <p class="text-xs text-gray-600 dark:text-gray-400 mt-2">Completed a Java Developer Certification covering core Java (OOP, collections, streams), JDBC, multithreading, and basic web development with Servlets. Gained hands-on experience building command-line and web-based projects, debugging, and applying best practices for clean, maintainable Java code.</p>
+                </a>
+
+                 <!-- Spoken Tutorial -->
+                 <a href="https://drive.google.com/file/d/1G4KKILLPhio2jkL45OP4s5aZtHZcAgdb/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="glass p-6 rounded-xl hover:bg-gray-100 dark:hover:bg-white/5 transition-all duration-300 hover-trigger group reveal flex flex-col items-center text-center">
+                    <div class="w-20 h-20 mb-4 bg-white rounded-full p-2 flex items-center justify-center overflow-hidden shadow-sm">
+                        <img src="https://i.ytimg.com/vi/UCWqRqp-G6w/maxresdefault.jpg" alt="Spoken Tutorial" class="max-w-full max-h-full">
+                    </div>
+                    <h3 class="font-bold text-gray-900 dark:text-white mb-2 group-hover:text-primary">SPOKEN TUTORIAL IIT BOMBAY</h3>
+                    <p class="text-xs text-gray-600 dark:text-gray-400 mt-2">Gained a solid understanding of programming fundamentals, data structures, and algorithms. Developed problem-solving skills through hands-on projects and exercises.</p>
+                </a>
+
+                 <!-- Remark Skills -->
+                 <a href="https://drive.google.com/file/d/1w2EfzROPFLc8qkOtUTSjQW0h7Gjoo7Bm/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="glass p-6 rounded-xl hover:bg-gray-100 dark:hover:bg-white/5 transition-all duration-300 hover-trigger group reveal flex flex-col items-center text-center">
+                    <div class="w-20 h-20 mb-4 bg-white rounded-full p-2 flex items-center justify-center overflow-hidden shadow-sm">
+                        <img src="https://th.bing.com/th/id/OIP.okOut4IpucB3-N530_8lUgAAAA?rs=1&pid=ImgDetMain" alt="Remark Skills" class="max-w-full max-h-full">
+                    </div>
+                    <h3 class="font-bold text-gray-900 dark:text-white mb-2 group-hover:text-primary">REMARK SKILLS</h3>
+                    <p class="text-xs text-gray-600 dark:text-gray-400 mt-2">I have visited Hyderabad IIT for the workshop on Data Science.</p>
+                </a>
+
+                 <!-- Dronacharya -->
+                 <a href="https://drive.google.com/drive/folders/10zZ1iVQBiFHvHdAQ2fjHx11O75ScPHQx?usp=sharing" target="_blank" rel="noopener noreferrer" class="glass p-6 rounded-xl hover:bg-gray-100 dark:hover:bg-white/5 transition-all duration-300 hover-trigger group reveal flex flex-col items-center text-center">
+                    <div class="w-20 h-20 mb-4 bg-white rounded-full p-2 flex items-center justify-center overflow-hidden shadow-sm">
+                        <img src="https://th.bing.com/th/id/OIP.oXfxG_t4FYA6IATpfmvWFwHaFj?w=232&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7" alt="Dronacharya" class="max-w-full max-h-full">
+                    </div>
+                    <h3 class="font-bold text-gray-900 dark:text-white mb-2 group-hover:text-primary">DRONACHARYA</h3>
+                    <p class="text-xs text-gray-600 dark:text-gray-400 mt-2">Working on drone integration and system integration. This involves utilizing advanced technologies to enhance drone capabilities, including real-time data processing, autonomous navigation, and seamless communication between drones and ground control systems. The integration aims to improve efficiency and effectiveness in various applications such as surveillance, delivery, and environmental monitoring.</p>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills" class="py-24 bg-gradient-to-b from-transparent to-gray-200 dark:to-black/80">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-16 reveal text-gray-900 dark:text-white"><span class="border-b-4 border-secondary pb-2">SKILLS</span></h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Restored original images for skills -->
+                <div class="glass p-8 rounded-xl border-t-4 border-primary hover:translate-y-[-10px] transition-transform duration-300 reveal text-center">
+                    <div class="skill-icon w-24 h-24 mx-auto mb-6 bg-gray-100 dark:bg-white/10 rounded-full flex items-center justify-center shadow-md">
+                         <img src="OIP (1).jpg" alt="Web Development" class="max-w-[60%] max-h-[60%]">
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">Web Development</h3>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm">I bring websites to life with clean, semantic HTML that provides a solid structure for exceptional user experiences. I wield CSS like a maestro, crafting visually stunning and responsive interfaces that adapt seamlessly to any device.</p>
+                </div>
+
+                <div class="glass p-8 rounded-xl border-t-4 border-secondary hover:translate-y-[-10px] transition-transform duration-300 reveal text-center">
+                    <div class="skill-icon w-24 h-24 mx-auto mb-6 bg-gray-100 dark:bg-white/10 rounded-full flex items-center justify-center shadow-md">
+                        <img src="5fd71b656c6ba-python-logo.webp" alt="Python" class="max-w-[60%] max-h-[60%]">
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">Python</h3>
+                    <p class="text-gray-600 dark:text-gray-400 text-sm">Python is widely used in data analysis and visualization, with libraries like Pandas, NumPy, and Matplotlib being particularly useful. Frameworks such as Django and Flask are used for backend web development. You can use Python in software development for scripting, automation, and testing.</p>
+                </div>
+
+                <div class="glass p-8 rounded-xl border-t-4 border-primary hover:translate-y-[-10px] transition-transform duration-300 reveal text-center">
+    <div class="skill-icon w-24 h-24 mx-auto mb-6 bg-gray-100 dark:bg-white/10 rounded-full flex items-center justify-center shadow-md">
+        <img src="software-development.png" alt="Software Development" class="max-w-[60%] max-h-[60%]">
+    </div>
+    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">Software Development</h3>
+    <p class="text-gray-600 dark:text-gray-400 text-sm">
+        Passionate about developing secure and scalable web applications using Java, Python, Django, Flask, React, Node.js, Express.js, and MongoDB. Experienced in building responsive user interfaces, implementing RESTful APIs, and creating efficient backend solutions through academic and personal projects.
+    </p>
+</div>
+
+<div class="glass p-8 rounded-xl border-t-4 border-secondary hover:translate-y-[-10px] transition-transform duration-300 reveal text-center">
+    <div class="skill-icon w-24 h-24 mx-auto mb-6 bg-gray-100 dark:bg-white/10 rounded-full flex items-center justify-center shadow-md">
+        <img src="cybersecurity.png" alt="Cyber Security" class="max-w-[60%] max-h-[60%] rounded-full">
+    </div>
+    <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">Cyber Security</h3>
+    <p class="text-gray-600 dark:text-gray-400 text-sm">
+        Skilled in cybersecurity fundamentals, including Network Security, VAPT, Threat Detection, Incident Response, and Email Security. Experienced with industry tools such as Splunk, Wireshark, Metasploit, Nmap, SQLMap, and CyberChef, with hands-on experience in phishing detection and security analysis.
+    </p>
+</div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- LinkedIn Activity -->
+    <section id="linkedin-activity" class="py-24 bg-gray-100 dark:bg-black/30">
+        <div class="container mx-auto px-6 text-center reveal">
+             <h2 class="text-3xl md:text-4xl font-bold text-center mb-16 text-gray-900 dark:text-white"><span class="border-b-4 border-primary pb-2">LINKEDIN ACTIVITY</span></h2>
+             <p class="text-gray-600 dark:text-gray-400 mb-8 text-lg">
+                For my latest activities and daily updates, please visit my LinkedIn profile.
+             </p>
+             <a href="https://www.linkedin.com/in/ketha-trivikram-2413aa34a/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-8 py-4 bg-[#0077b5] text-white rounded-full font-bold hover:shadow-lg hover:shadow-blue-500/40 transition-all transform hover:-translate-y-1 hover-trigger text-lg">
+                <i class="fab fa-linkedin text-2xl mr-3"></i> View on LinkedIn
+            </a>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-24 relative overflow-hidden">
+        <div class="container mx-auto px-6 relative z-10">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-16 reveal text-gray-900 dark:text-white"><span class="border-b-4 border-primary pb-2">CONTACT ME</span></h2>
+            
+            <div class="max-w-2xl mx-auto glass rounded-2xl p-8 md:p-12 shadow-2xl reveal">
+                <div class="text-center mb-8 text-gray-600 dark:text-gray-300">
+                    <p class="font-bold text-gray-900 dark:text-white text-xl">K.Trivikram</p>
+                    <p>kethatrivikram4369@gmail.com</p>
+                </div>
+                <form action="https://formspree.io/f/mbdvveoa" method="post" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <label for="name" class="text-sm font-bold text-primary">Name:</label>
+                            <input type="text" id="name" name="name" class="w-full bg-white/70 dark:bg-black/50 border border-gray-300 dark:border-gray-600 rounded-lg p-3 text-gray-900 dark:text-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all hover-trigger" required>
+                        </div>
+                        <div class="space-y-2">
+                            <label for="email" class="text-sm font-bold text-primary">Email:</label>
+                            <input type="email" id="email" name="email" class="w-full bg-white/70 dark:bg-black/50 border border-gray-300 dark:border-gray-600 rounded-lg p-3 text-gray-900 dark:text-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all hover-trigger" required>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <label for="message" class="text-sm font-bold text-primary">Message:</label>
+                        <textarea id="message" name="message" rows="5" class="w-full bg-white/70 dark:bg-black/50 border border-gray-300 dark:border-gray-600 rounded-lg p-3 text-gray-900 dark:text-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all hover-trigger" required></textarea>
+                    </div>
+                    <button type="submit" class="w-full bg-gradient-to-r from-primary to-secondary text-white dark:text-black font-bold py-4 rounded-lg hover:shadow-lg hover:shadow-primary/30 transition-all transform hover:-translate-y-1 hover-trigger">Send Message</button>
+                </form>
+
+                <div class="mt-12 flex justify-center space-x-8">
+                    <a href="https://www.linkedin.com/in/ketha-trivikram-2413aa34a/" target="_blank" rel="noopener noreferrer" class="text-3xl text-gray-600 dark:text-gray-500 hover:text-primary dark:hover:text-white hover:scale-110 transition-all hover-trigger"><i class="fab fa-linkedin"></i></a>
+                    <a href="https://github.com/2200030025" target="_blank" rel="noopener noreferrer" class="text-3xl text-gray-600 dark:text-gray-500 hover:text-primary dark:hover:text-white hover:scale-110 transition-all hover-trigger"><i class="fab fa-github"></i></a>
+                    <a href="https://www.instagram.com/Kethavignesh.in?igsh=MTUxNDE3MzVjbWpkMA==" target="_blank" rel="noopener noreferrer" class="text-3xl text-gray-600 dark:text-gray-500 hover:text-primary dark:hover:text-white hover:scale-110 transition-all hover-trigger"><i class="fab fa-instagram"></i></a>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-200 dark:bg-black py-8 border-t border-gray-300 dark:border-gray-800 text-center">
+        <p class="text-gray-600 dark:text-gray-500 font-mono text-sm">&copy; 2023 Ketha Trivikram. All rights reserved.</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // --- Theme Toggle Logic ---
+        const themeToggleBtn = document.getElementById('themeToggle');
+        const mobileThemeToggleBtn = document.getElementById('mobileThemeToggle');
+        const htmlElement = document.documentElement;
+
+        // Check local storage or system preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            htmlElement.className = savedTheme + ' scroll-smooth'; 
+        } else {
+            // Default to dark mode
+            htmlElement.classList.add('dark');
+        }
+
+        function toggleTheme() {
+            if (htmlElement.classList.contains('dark')) {
+                htmlElement.classList.remove('dark');
+                localStorage.setItem('theme', '');
+            } else {
+                htmlElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        themeToggleBtn.addEventListener('click', toggleTheme);
+        if(mobileThemeToggleBtn) mobileThemeToggleBtn.addEventListener('click', toggleTheme);
+
+
+        // --- 1. Custom Cursor Logic ---
+        const cursorDot = document.querySelector('.cursor-dot');
+        const cursorOutline = document.querySelector('.cursor-outline');
+        const hoverTriggers = document.querySelectorAll('.hover-trigger');
+
+        window.addEventListener('mousemove', (e) => {
+            const posX = e.clientX;
+            const posY = e.clientY;
+
+            // Dot follows instantly
+            cursorDot.style.left = `${posX}px`;
+            cursorDot.style.top = `${posY}px`;
+
+            // Outline follows with delay (animation in CSS)
+            cursorOutline.animate({
+                left: `${posX}px`,
+                top: `${posY}px`
+            }, { duration: 500, fill: "forwards" });
+        });
+
+        // Add hover effect to interactive elements
+        hoverTriggers.forEach(trigger => {
+            trigger.addEventListener('mouseenter', () => {
+                cursorOutline.classList.add('hovered');
+            });
+            trigger.addEventListener('mouseleave', () => {
+                cursorOutline.classList.remove('hovered');
+            });
+        });
+
+        // --- 2. Scroll Animation Logic ---
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal').forEach(el => {
+            observer.observe(el);
+        });
+
+        // --- 3. Navbar Scroll Effect ---
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('py-2');
+                navbar.firstElementChild.classList.add('shadow-lg', 'bg-white/90', 'dark:bg-black/90');
+                navbar.firstElementChild.classList.remove('py-4');
+                navbar.firstElementChild.classList.add('py-2');
+            } else {
+                navbar.classList.remove('py-2');
+                navbar.firstElementChild.classList.remove('shadow-lg', 'bg-white/90', 'dark:bg-black/90');
+                navbar.firstElementChild.classList.remove('py-2');
+                navbar.firstElementChild.classList.add('py-4');
+            }
+        });
+
+        // --- 4. Mobile Menu ---
+        const mobileBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+
+        mobileBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+
+        // --- 5. Carousel Logic ---
+        const track = document.getElementById('carousel-track');
+        const dotsContainer = document.getElementById('carousel-dots');
+        const slides = Array.from(track.children);
+        const nextBtn = document.getElementById('nextBtn');
+        const prevBtn = document.getElementById('prevBtn');
+        const titleEl = document.getElementById('carousel-title');
+        const descEl = document.getElementById('carousel-desc');
+
+        const slideInfo = [
+            { 
+                title: "CODE SPARK 2025", 
+                desc: "We won the Best Innovation Award at the Code Spark National Level 24-Hour Hackathon for developing NeuroNodes, an innovative web application built within just 24 hours. Our achievement was proudly featured in the Eenadu newspaper, bringing wider recognition to our work. We also received appreciation from our college Principal and Head of the Department for this milestone, which highlights our ability to combine creativity, cutting-edge technology, and teamwork to create impactful solutions under tight deadlines.." 
+            },
+            { 
+                title: "CODE SPARK 2025", 
+                desc: "We won the Best Innovation Award at the Code Spark National Level 24-Hour Hackathon for developing NeuroNodes, an innovative web application built within just 24 hours. Our achievement was proudly featured in the Eenadu newspaper, bringing wider recognition to our work. We also received appreciation from our college Principal and Head of the Department for this milestone, which highlights our ability to combine creativity, cutting-edge technology, and teamwork to create impactful solutions under tight deadlines.." 
+            },
+            { 
+                title: "CODE SPARK 2025", 
+                desc: "We won the Best Innovation Award at the Code Spark National Level 24-Hour Hackathon for developing NeuroNodes, an innovative web application built within just 24 hours. Our achievement was proudly featured in the Eenadu newspaper, bringing wider recognition to our work. We also received appreciation from our college Principal and Head of the Department for this milestone, which highlights our ability to combine creativity, cutting-edge technology, and teamwork to create impactful solutions under tight deadlines.." 
+            },
+            { 
+                title: "CODE SPARK 2025", 
+                desc: "We won the Best Innovation Award at the Code Spark National Level 24-Hour Hackathon for developing NeuroNodes, an innovative web application built within just 24 hours. Our achievement was proudly featured in the Eenadu newspaper, bringing wider recognition to our work. We also received appreciation from our college Principal and Head of the Department for this milestone, which highlights our ability to combine creativity, cutting-edge technology, and teamwork to create impactful solutions under tight deadlines.." 
+            },
+            { 
+                title: "CODE SPARK 2025", 
+                desc: "We won the Best Innovation Award at the Code Spark National Level 24-Hour Hackathon for developing NeuroNodes, an innovative web application built within just 24 hours. Our achievement was proudly featured in the Eenadu newspaper, bringing wider recognition to our work. We also received appreciation from our college Principal and Head of the Department for this milestone, which highlights our ability to combine creativity, cutting-edge technology, and teamwork to create impactful solutions under tight deadlines.." 
+            },
+            { 
+                title: "CODE SPARK 2025", 
+                desc: "We won the Best Innovation Award at the Code Spark National Level 24-Hour Hackathon for developing NeuroNodes, an innovative web application built within just 24 hours. Our achievement was proudly featured in the Eenadu newspaper, bringing wider recognition to our work. We also received appreciation from our college Principal and Head of the Department for this milestone, which highlights our ability to combine creativity, cutting-edge technology, and teamwork to create impactful solutions under tight deadlines.." 
+            }
+        ];
+
+        let currentSlide = 0;
+
+        // Create dots
+        slides.forEach((_, index) => {
+            const dot = document.createElement('button');
+            dot.classList.add('w-3', 'h-3', 'rounded-full', 'bg-gray-400', 'hover:bg-primary', 'transition-all');
+            if (index === 0) dot.classList.add('bg-primary', 'scale-125');
+            dot.addEventListener('click', () => moveToSlide(index));
+            dotsContainer.appendChild(dot);
+        });
+
+        const dots = Array.from(dotsContainer.children);
+
+        function updateSlideInfo(index) {
+            titleEl.textContent = slideInfo[index % slideInfo.length].title;
+            descEl.textContent = slideInfo[index % slideInfo.length].desc;
+        }
+
+        function moveToSlide(targetIndex) {
+            if (targetIndex < 0) targetIndex = slides.length - 1;
+            if (targetIndex >= slides.length) targetIndex = 0;
+
+            track.style.transform = `translateX(-${targetIndex * 100}%)`;
+            
+            dots[currentSlide].classList.remove('bg-primary', 'scale-125');
+            dots[currentSlide].classList.add('bg-gray-400');
+            
+            dots[targetIndex].classList.remove('bg-gray-400');
+            dots[targetIndex].classList.add('bg-primary', 'scale-125');
+            
+            updateSlideInfo(targetIndex);
+            currentSlide = targetIndex;
+        }
+
+        nextBtn.addEventListener('click', () => moveToSlide(currentSlide + 1));
+        prevBtn.addEventListener('click', () => moveToSlide(currentSlide - 1));
+
+        // Auto play
+        setInterval(() => {
+            moveToSlide(currentSlide + 1);
+        }, 5000);
+
+        // --- 6. Starfield Background (Space Theme) ---
+        const canvas = document.getElementById('starfield');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let stars = [];
+
+        function initStars() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            stars = [];
+            
+            const starCount = 150;
+            for(let i=0; i<starCount; i++) {
+                stars.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    size: Math.random() * 2,
+                    speed: Math.random() * 0.5,
+                    opacity: Math.random(),
+                    twinkleSpeed: 0.05 + Math.random() * 0.05
+                });
+            }
+        }
+
+        function animateStars() {
+            const isDark = document.documentElement.classList.contains('dark');
+            
+            // Only render stars in Dark Mode
+            if (!isDark) {
+                ctx.clearRect(0, 0, width, height);
+                requestAnimationFrame(animateStars);
+                return;
+            }
+
+            ctx.clearRect(0, 0, width, height);
+            
+            // Simple space background is handled by CSS, we just draw stars
+            ctx.fillStyle = '#FFFFFF';
+
+            stars.forEach(star => {
+                // Update opacity for twinkle
+                star.opacity += star.twinkleSpeed;
+                if (star.opacity > 1 || star.opacity < 0.3) {
+                    star.twinkleSpeed = -star.twinkleSpeed;
+                }
+                
+                // Move star slightly up to simulate travel
+                star.y -= star.speed;
+                if(star.y < 0) star.y = height;
+
+                ctx.globalAlpha = star.opacity;
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            requestAnimationFrame(animateStars);
+        }
+
+        window.addEventListener('resize', initStars);
+        initStars();
+        animateStars();
+
+    </script>
+</body>
+</html>
